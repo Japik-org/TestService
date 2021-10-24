@@ -75,6 +75,7 @@ public class TestService extends AService<ITestServiceConnection> {
 
             tick.destroy();
             tickGroup.deleteTickGroup();
+            tickGroup = null;
         }
     }
 
@@ -85,7 +86,7 @@ public class TestService extends AService<ITestServiceConnection> {
         @Override
         public void apply(Settings settings, SettingListenerEventMask eventMask) throws Throwable {
             if (eventMask.containsPartially(SettingListenerEventMask.ON_APPLY)) {
-                if (isCreateTickGroupEnabled(settings)) {
+                if (isCreateTickGroupEnabled(settings) && tickGroup==null) {
                     tickGroup = Ticks.newTickGroupFreeMod(settings);
                     tickGroup.getLiveCycle().init();
 
