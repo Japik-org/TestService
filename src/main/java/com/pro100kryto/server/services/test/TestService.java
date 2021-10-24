@@ -1,4 +1,4 @@
-package com.pro100kryto.server.services;
+package com.pro100kryto.server.services.test;
 
 import com.pro100kryto.server.livecycle.AShortLiveCycleImpl;
 import com.pro100kryto.server.livecycle.ILiveCycleImpl;
@@ -8,12 +8,13 @@ import com.pro100kryto.server.logger.ILogger;
 import com.pro100kryto.server.service.AService;
 import com.pro100kryto.server.service.AServiceConnectionImpl;
 import com.pro100kryto.server.service.ServiceParams;
-import com.pro100kryto.server.services.test.ITestServiceConnection;
-import com.pro100kryto.server.services.test.TestServiceTickRunnable;
 import com.pro100kryto.server.settings.SettingListenerEventMask;
+import com.pro100kryto.server.settings.Settings;
+import com.pro100kryto.server.settings.SettingsManager;
 import com.pro100kryto.server.tick.ITick;
 import com.pro100kryto.server.tick.ITickGroup;
 import com.pro100kryto.server.tick.Ticks;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
 import static com.pro100kryto.server.services.test.TestServiceSettingKeys.isCreateTickGroupEnabled;
@@ -47,22 +48,7 @@ public class TestService extends AService<ITestServiceConnection> {
 
         @Override
         public void init() {
-            settingsManager.setCommonSettingsListener((settings, eventMask) -> {
-                if (eventMask.containsPartially(SettingListenerEventMask.ON_APPLY)) {
-                    if (isCreateTickGroupEnabled(settings)) {
-                        tickGroup = Ticks.newTickGroupFreeMod(settings);
-                        tickGroup.getLiveCycle().init();
-
-                        tickRunnable = new TestServiceTickRunnable(service, logger, null);
-                        tick = tickGroup.createTick(tickRunnable);
-
-                        if (getLiveCycle().getStatus().isStarted()) {
-                            tickGroup.getLiveCycle().start();
-                            tick.activate();
-                        }
-                    }
-                }
-            });
+            settingsManager.setCommonSettingsListener(new SettingsListener(service));
         }
 
         @Override
@@ -89,6 +75,29 @@ public class TestService extends AService<ITestServiceConnection> {
 
             tick.destroy();
             tickGroup.deleteTickGroup();
+        }
+    }
+
+    @RequiredArgsConstructor
+    public final class SettingsListener implements SettingsManager.ICommonSettingsListener{
+        private final TestService service;
+
+        @Override
+        public void apply(Settings settings, SettingListenerEventMask eventMask) throws Throwable {
+            if (eventMask.containsPartially(SettingListenerEventMask.ON_APPLY)) {
+                if (isCreateTickGroupEnabled(settings)) {
+                    tickGroup = Ticks.newTickGroupFreeMod(settings);
+                    tickGroup.getLiveCycle().init();
+
+                    tickRunnable = new TestServiceTickRunnable(service, logger, null);
+                    tick = tickGroup.createTick(tickRunnable);
+
+                    if (getLiveCycle().getStatus().isStarted()) {
+                        tickGroup.getLiveCycle().start();
+                        tick.activate();
+                    }
+                }
+            }
         }
     }
 
