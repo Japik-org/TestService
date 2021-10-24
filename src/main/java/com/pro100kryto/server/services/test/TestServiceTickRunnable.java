@@ -1,7 +1,6 @@
 package com.pro100kryto.server.services.test;
 
 import com.pro100kryto.server.logger.ILogger;
-import com.pro100kryto.server.services.TestService;
 import com.pro100kryto.server.tick.AServiceTickRunnable;
 import lombok.Getter;
 
@@ -21,13 +20,15 @@ public class TestServiceTickRunnable extends AServiceTickRunnable<TestService, I
     }
 
     @Override
-    public void tick(long dtms) {
+    public void tick(long dtms) throws InterruptedException {
         logger.info("dtms = " + dtms);
         if ((++dtmsCounter) == dtmsCounterMax) {
             dtmsMedium = dtmsMediumTemp;
             dtmsMediumTemp = 0;
         }
         dtmsMediumTemp += dtms / (double) dtmsCounterMax;
+
+        Thread.sleep(1500);
     }
 
 }
