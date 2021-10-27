@@ -6,7 +6,7 @@ import com.pro100kryto.server.livecycle.StartException;
 import com.pro100kryto.server.livecycle.StopSlowException;
 import com.pro100kryto.server.logger.ILogger;
 import com.pro100kryto.server.service.AService;
-import com.pro100kryto.server.service.AServiceConnectionImpl;
+import com.pro100kryto.server.service.AServiceConnection;
 import com.pro100kryto.server.service.ServiceParams;
 import com.pro100kryto.server.settings.SettingListenerEventMask;
 import com.pro100kryto.server.settings.Settings;
@@ -102,7 +102,7 @@ public class TestService extends AService<ITestServiceConnection> {
         }
     }
 
-    private final class TestServiceConnection extends AServiceConnectionImpl<TestService, ITestServiceConnection>
+    private final class TestServiceConnection extends AServiceConnection<TestService, ITestServiceConnection>
             implements ITestServiceConnection {
 
         public TestServiceConnection(@NotNull TestService service, ILogger logger) {
