@@ -1,27 +1,31 @@
-package com.pro100kryto.server.services.test;
+package com.japik.services.test;
 
-import com.pro100kryto.server.livecycle.AShortLiveCycleImpl;
-import com.pro100kryto.server.livecycle.ILiveCycleImpl;
-import com.pro100kryto.server.livecycle.StartException;
-import com.pro100kryto.server.livecycle.StopSlowException;
-import com.pro100kryto.server.logger.ILogger;
-import com.pro100kryto.server.service.AService;
-import com.pro100kryto.server.service.AServiceConnection;
-import com.pro100kryto.server.service.ServiceParams;
-import com.pro100kryto.server.settings.SettingListenerEventMask;
-import com.pro100kryto.server.settings.Settings;
-import com.pro100kryto.server.settings.SettingsManager;
-import com.pro100kryto.server.tick.ITick;
-import com.pro100kryto.server.tick.ITickGroup;
-import com.pro100kryto.server.tick.Ticks;
+import com.japik.livecycle.AShortLiveCycleImpl;
+import com.japik.livecycle.StartException;
+import com.japik.livecycle.StopSlowException;
+import com.japik.livecycle.controller.ILiveCycleImplId;
+import com.japik.livecycle.controller.LiveCycleController;
+import com.japik.service.AService;
+import com.japik.service.ServiceConnectionParams;
+import com.japik.service.ServiceParams;
+import com.japik.settings.SettingListenerEventMask;
+import com.japik.settings.Settings;
+import com.japik.settings.SettingsManager;
+import com.japik.tick.ITick;
+import com.japik.tick.ITickGroup;
+import com.japik.tick.Ticks;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
+import lombok.Setter;
 
-import static com.pro100kryto.server.services.test.TestServiceSettingKeys.isCreateTickGroupEnabled;
+import static com.japik.services.test.TestServiceSettingKeys.isCreateTickGroupEnabled;
 
 public class TestService extends AService<ITestServiceConnection> {
+    @Getter
     private ITickGroup tickGroup;
+    @Getter
     private ITick tick;
+    @Getter
     private TestServiceTickRunnable tickRunnable;
 
     public TestService(ServiceParams serviceParams) {
@@ -29,26 +33,32 @@ public class TestService extends AService<ITestServiceConnection> {
     }
 
     @Override
-    public ITestServiceConnection createServiceConnection() {
-        return new TestServiceConnection(this, logger);
+    protected ITestServiceConnection createServiceConnection(ServiceConnectionParams params) {
+        return new TestServiceConnection(this, params);
     }
 
-    @NotNull
     @Override
-    protected ILiveCycleImpl getDefaultLiveCycleImpl() {
-        return new LiveCycleImpl(this);
+    protected void initLiveCycleController(LiveCycleController liveCycleController) {
+        super.initLiveCycleController(liveCycleController);
+        liveCycleController.putImplAll(new TestLiveCycleImpl(this));
     }
 
-    private final class LiveCycleImpl extends AShortLiveCycleImpl {
+    private final class TestLiveCycleImpl extends AShortLiveCycleImpl implements ILiveCycleImplId {
         private final TestService service;
 
-        private LiveCycleImpl(TestService service) {
+        @Getter
+        private final String name = "TestLiveCycleImpl";
+        @Getter @Setter
+        private int priority = LiveCycleController.PRIORITY_NORMAL;
+
+        private TestLiveCycleImpl(TestService service) {
             this.service = service;
         }
 
         @Override
-        public void init() {
+        public void init() throws Throwable{
             settingsManager.setCommonSettingsListener(new SettingsListener(service));
+            settingsManager.apply();
         }
 
         @Override
@@ -80,7 +90,7 @@ public class TestService extends AService<ITestServiceConnection> {
     }
 
     @RequiredArgsConstructor
-    public final class SettingsListener implements SettingsManager.ICommonSettingsListener{
+    public final class SettingsListener implements SettingsManager.ICommonSettingsListener {
         private final TestService service;
 
         @Override
@@ -102,26 +112,4 @@ public class TestService extends AService<ITestServiceConnection> {
         }
     }
 
-    private final class TestServiceConnection extends AServiceConnection<TestService, ITestServiceConnection>
-            implements ITestServiceConnection {
-
-        public TestServiceConnection(@NotNull TestService service, ILogger logger) {
-            super(service, logger);
-        }
-
-        @Override
-        public long getTickCounter() {
-            return tickRunnable.getDtmsCounter();
-        }
-
-        @Override
-        public double getTickGroupDtms() {
-            return tickRunnable.getDtmsMedium();
-        }
-
-        @Override
-        protected void onClose() {
-            logger.info("TestServiceConnection closed");
-        }
-    }
 }

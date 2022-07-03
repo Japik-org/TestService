@@ -1,6 +1,6 @@
-package com.pro100kryto.server.services.test;
+package com.japik.services.test;
 
-import com.pro100kryto.server.service.IServiceConnection;
+import com.japik.service.IServiceConnection;
 
 public interface ITestServiceConnection extends IServiceConnection {
     long getTickCounter();

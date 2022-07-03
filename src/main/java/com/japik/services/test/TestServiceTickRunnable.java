@@ -1,7 +1,7 @@
-package com.pro100kryto.server.services.test;
+package com.japik.services.test;
 
-import com.pro100kryto.server.logger.ILogger;
-import com.pro100kryto.server.tick.AServiceTickRunnable;
+import com.japik.logger.ILogger;
+import com.japik.tick.AServiceTickRunnable;
 import lombok.Getter;
 
 public class TestServiceTickRunnable extends AServiceTickRunnable<TestService, ITestServiceConnection> {

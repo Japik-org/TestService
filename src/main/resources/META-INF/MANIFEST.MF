@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+
+Name: Service-Impl
+Shared-Subtype: Test
+Subtype: Test
+Version: 0.3
+Base-Package: com.japik
+
+Name: Service-Shared
+Subtype: Test
+Version: 0.3
+Base-Package: com.japik

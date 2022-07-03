@@ -1,6 +1,6 @@
-package com.pro100kryto.server.services.test;
+package com.japik.services.test;
 
-import com.pro100kryto.server.settings.Settings;
+import com.japik.settings.Settings;
 
 public final class TestServiceSettingKeys {
     public static String KEY_CREATE_TICK_GROUP;
