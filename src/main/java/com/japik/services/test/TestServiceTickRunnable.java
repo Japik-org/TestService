@@ -1,6 +1,7 @@
 package com.japik.services.test;
 
 import com.japik.logger.ILogger;
+import com.japik.services.test.shared.ITestServiceConnection;
 import com.japik.tick.AServiceTickRunnable;
 import lombok.Getter;
 

@@ -8,6 +8,7 @@ import com.japik.livecycle.controller.LiveCycleController;
 import com.japik.service.AService;
 import com.japik.service.ServiceConnectionParams;
 import com.japik.service.ServiceParams;
+import com.japik.services.test.shared.ITestServiceConnection;
 import com.japik.settings.SettingListenerEventMask;
 import com.japik.settings.Settings;
 import com.japik.settings.SettingsManager;

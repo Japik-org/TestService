@@ -2,6 +2,7 @@ package com.japik.services.test;
 
 import com.japik.service.AServiceConnection;
 import com.japik.service.ServiceConnectionParams;
+import com.japik.services.test.shared.ITestServiceConnection;
 import org.jetbrains.annotations.NotNull;
 
 final class TestServiceConnection extends AServiceConnection<TestService, ITestServiceConnection>

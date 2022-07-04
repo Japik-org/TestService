@@ -1,4 +1,4 @@
-package com.japik.services.test;
+package com.japik.services.test.shared;
 
 import com.japik.service.IServiceConnection;
 
